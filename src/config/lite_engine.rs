@@ -1,7 +1,6 @@
-use crate::call;
-use crate::common::PrecisionType;
 use crate::config::SetConfig;
-use crate::ctypes::{PD_Config, PD_ConfigEnableLiteEngine};
+use crate::ctypes::PD_PrecisionType;
+use crate::ctypes::*;
 use crate::utils::to_c_str;
 
 /// Lite 子图
@@ -9,9 +8,9 @@ use crate::utils::to_c_str;
 #[derive(Debug, Clone)]
 pub struct LiteEngine {
     /// Lite 子图的运行精度
-    pub precision: PrecisionType,
+    pub precision: PD_PrecisionType,
     /// 启用 zero_copy，lite 子图与 paddle inference 之间共享数据
-    pub zero_copy: bool,
+    pub zero_copy: PD_Bool,
     /// lite 子图的 pass 名称列表
     pub passes_filter: Vec<String>,
     /// 不使用 lite 子图运行的 op 名称列表
@@ -38,7 +37,7 @@ impl SetConfig for LiteEngine {
             .unzip::<_, _, Vec<_>, Vec<_>>();
         let ops_filter_num = ops_filter_ptr.len();
 
-        call! {
+        unsafe {
             PD_ConfigEnableLiteEngine(
                 config,
                 precision,
@@ -46,7 +45,7 @@ impl SetConfig for LiteEngine {
                 passes_filter_num,
                 passes_filter_ptr.as_mut_ptr(),
                 ops_filter_num,
-                ops_filter_ptr.as_mut_ptr()
+                ops_filter_ptr.as_mut_ptr(),
             )
         };
     }

@@ -8,6 +8,8 @@ repository = "https://github.com/ZB94/paddle_inference"
 license = "Apache-2.0"
 description = "paddle_inference_c的Rust封装"
 
+build = "build.rs"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
 default = []

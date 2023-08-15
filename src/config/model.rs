@@ -1,4 +1,5 @@
-use crate::call;
+use std::{fs, path::Path};
+
 use crate::config::SetConfig;
 use crate::ctypes::{PD_Config, PD_ConfigSetModel, PD_ConfigSetModelBuffer, PD_ConfigSetModelDir};
 use crate::utils::to_c_str;
@@ -45,24 +46,27 @@ impl SetConfig for Model {
         match self {
             Model::Dir(dir) => {
                 let (_p, ptr) = to_c_str(&dir);
-                call! { PD_ConfigSetModelDir(config, ptr) };
+                unsafe { PD_ConfigSetModelDir(config, ptr) };
             }
             Model::Path {
                 model_file_path,
                 params_file_path,
             } => {
+                if !Path::new(&model_file_path).exists() {
+                    eprint!("model {model_file_path} doesn't exist.")
+                };
                 let (_m, model_path) = to_c_str(&model_file_path);
                 let (_p, params_path) = to_c_str(&params_file_path);
-                call! { PD_ConfigSetModel(config, model_path, params_path) };
+                unsafe { PD_ConfigSetModel(config, model_path, params_path) };
             }
             Model::Memory { model, params } => {
-                call! {
+                unsafe {
                     PD_ConfigSetModelBuffer(
                         config,
                         model.as_ptr() as *const _,
                         model.len(),
                         params.as_ptr() as *const _,
-                        params.len()
+                        params.len(),
                     )
                 };
             }

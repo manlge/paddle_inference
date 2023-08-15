@@ -1,4 +1,3 @@
-use crate::call;
 use crate::ctypes::{PD_OneDimArrayCstr, PD_OneDimArrayCstrDestroy};
 use std::borrow::Cow;
 use std::ffi::{CStr, CString, NulError};
@@ -68,7 +67,7 @@ impl Drop for OneDimArrayCstr {
                 unsafe { CString::from_raw((*ptr) as *mut _) };
             }
         } else {
-            call! { PD_OneDimArrayCstrDestroy(self.ptr) }
+            unsafe { PD_OneDimArrayCstrDestroy(self.ptr) }
         }
     }
 }

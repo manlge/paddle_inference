@@ -4,16 +4,9 @@ pub mod lite_engine;
 pub mod model;
 pub mod setting;
 
-use crate::call;
-use crate::config::lite_engine::LiteEngine;
 use crate::config::setting::{Cpu, Gpu, ONNXRuntime, Xpu};
-use crate::ctypes::{
-    PD_Config, PD_ConfigCreate, PD_ConfigDisableFCPadding, PD_ConfigDisableGlogInfo,
-    PD_ConfigEnableMemoryOptim, PD_ConfigProfileEnabled, PD_ConfigSetOptimCacheDir,
-    PD_ConfigSwitchIrDebug, PD_PredictorCreate,
-};
-use crate::predictor::Predictor;
-use crate::utils::to_c_str;
+use crate::ctypes::PD_Config;
+use crate::{config::lite_engine::LiteEngine, ctypes::PD_Bool};
 use model::Model;
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
@@ -30,13 +23,13 @@ pub struct Config {
     /// ONNXRuntime 设置
     pub onnx_runtime: Option<ONNXRuntime>,
     /// 启用 IR 优化, 默认打开
-    pub ir_optimization: bool,
+    pub ir_optimization: PD_Bool,
     /// 是否在图分析阶段打印 IR，启用后会在每一个 PASS 后生成 dot 文件, 默认关闭
-    pub ir_debug: bool,
+    pub ir_debug: PD_Bool,
     /// 启用 Lite 子图
     pub lite: Option<LiteEngine>,
     /// 开启内存/显存复用，具体降低内存效果取决于模型结构
-    pub memory_optimization: bool,
+    pub memory_optimization: PD_Bool,
     /// 缓存路径
     ///
     /// **注意：** 如果当前使用的为 TensorRT INT8 且设置从内存中加载模型，则必须通过该方法来设置缓存路径。
@@ -57,10 +50,10 @@ impl Config {
             gpu: None,
             xpu: None,
             onnx_runtime: None,
-            ir_optimization: true,
-            ir_debug: false,
+            ir_optimization: 1,
+            ir_debug: 0,
             lite: None,
-            memory_optimization: false,
+            memory_optimization: 1,
             optimization_cache_dir: None,
             disable_fc_padding: false,
             profile: false,
@@ -96,7 +89,7 @@ impl Config {
 
     /// 开启内存/显存复用，具体降低内存效果取决于模型结构
     pub fn enable_memory_optimization(mut self) -> Self {
-        self.memory_optimization = true;
+        self.memory_optimization = 1;
         self
     }
 
@@ -108,13 +101,13 @@ impl Config {
 
     /// 启用 IR 优化, 默认打开
     pub fn ir_optimization(mut self, enable: bool) -> Self {
-        self.ir_optimization = enable;
+        self.ir_optimization = if enable { 1 } else { 0 };
         self
     }
 
     /// 是否在图分析阶段打印 IR，启用后会在每一个 PASS 后生成 dot 文件, 默认关闭
     pub fn ir_debug(mut self, debug: bool) -> Self {
-        self.ir_debug = debug;
+        self.ir_debug = if debug { 1 } else { 0 };
         self
     }
 
@@ -137,70 +130,8 @@ impl Config {
         self.onnx_runtime = Some(onnx_runtime);
         self
     }
-
-    pub fn build(self) -> Predictor {
-        let Self {
-            model,
-            cpu,
-            gpu,
-            xpu,
-            onnx_runtime,
-            ir_optimization,
-            ir_debug,
-            lite,
-            memory_optimization,
-            optimization_cache_dir,
-            disable_fc_padding,
-            profile,
-            disable_log,
-        } = self;
-
-        let config = call! { PD_ConfigCreate() };
-
-        model.set_to(config);
-
-        cpu.set_to(config);
-        if let Some(g) = gpu {
-            g.set_to(config)
-        }
-        if let Some(x) = xpu {
-            x.set_to(config)
-        }
-        if let Some(o) = onnx_runtime {
-            o.set_to(config)
-        }
-
-        call! { PD_ConfigSwitchIrDebug(config, ir_optimization) };
-        call! { PD_ConfigSwitchIrDebug(config, ir_debug) };
-
-        if let Some(l) = lite {
-            l.set_to(config)
-        }
-
-        call! { PD_ConfigEnableMemoryOptim(config, memory_optimization) };
-
-        if let Some(s) = optimization_cache_dir {
-            let (_s, cs) = to_c_str(&s);
-            call! { PD_ConfigSetOptimCacheDir(config, cs) };
-        }
-
-        if disable_fc_padding {
-            call! { PD_ConfigDisableFCPadding(config) };
-        }
-
-        if profile {
-            call! { PD_ConfigProfileEnabled(config) };
-        }
-
-        if disable_log {
-            call! { PD_ConfigDisableGlogInfo(config) };
-        }
-
-        let ptr = call! { PD_PredictorCreate(config) };
-        Predictor::from_ptr(ptr)
-    }
 }
 
-trait SetConfig {
+pub(crate) trait SetConfig {
     fn set_to(self, config: *mut PD_Config);
 }
