@@ -1,0 +1,24 @@
+{
+    "rust-analyzer.cargo.extraEnv": {
+        "CUDA_VISIBLE_DEVICES": "0,1",
+        "PADDLE_INFERENCE": "/home/mark/paddle_inference/paddle_inference_c",
+        "LD_LIBRARY_PATH": "/usr/local/cuda-11.6/targets/x86_64-linux/lib",
+    },
+    "rust-analyzer.debug.engineSettings": {
+        "lldb": {
+            "env": {
+                "PADDLE_INFERENCE": "/home/mark/paddle_inference/paddle_inference_c",
+            },
+            "envFile": ".env"
+        }
+    },
+    "rust-analyzer.runnableEnv": {
+        "CUDA_VISIBLE_DEVICES": "0,1",
+        "PADDLE_INFERENCE": "/home/mark/paddle_inference/paddle_inference_c",
+    },
+    "rust-analyzer.runnables.cargoExtraArgs": [
+        "--",
+        "--gpu",
+        "0"
+    ]
+}

@@ -22,3 +22,6 @@ serde = { version = "1", features = ["derive"], optional = true }
 
 [workspace]
 members = ["examples/ocr/"]
+
+[build-dependencies]
+bindgen = "0.66.1"

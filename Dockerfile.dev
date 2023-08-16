@@ -1,0 +1,11 @@
+FROM nvidia/cuda:11.6.2-cudnn8-runtime-ubuntu18.04 as builder
+
+RUN chmod oug+rwx /tmp && apt update && \
+	DEBIAN_FRONTEND="noninteractive" apt -y install --no-install-recommends git wget libssl-dev libopencv-dev clang libclang-dev curl && \
+	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > /tmp/rustup && sh /tmp/rustup -y
+
+
+ENV PATH="${PATH}:/root/.cargo/bin"
+
+RUN ln -s /usr/local/cuda-11.6/targets/x86_64-linux/lib/libcublas.so.11 /usr/local/cuda-11.6/targets/x86_64-linux/lib/libcublas.so && \
+	ln -s /usr/lib/x86_64-linux-gnu/libcudnn.so.8 /usr/local/cuda/lib64/libcudnn.so

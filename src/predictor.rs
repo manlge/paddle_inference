@@ -1,7 +1,7 @@
+use crate::ctypes::PD_ConfigCreate;
 use crate::tensor::Tensor;
 use crate::utils::to_c_str;
 use crate::{common::OneDimArrayCstr, ctypes::PD_Bool};
-use crate::{config::model::Model, ctypes::PD_ConfigCreate};
 use crate::{config::Config, ctypes::*};
 use crate::{
     config::SetConfig,
