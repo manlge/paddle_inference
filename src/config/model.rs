@@ -53,7 +53,13 @@ impl SetConfig for Model {
                 params_file_path,
             } => {
                 if !Path::new(&model_file_path).exists() {
-                    eprint!("model {model_file_path} doesn't exist.")
+                    eprint!("file {model_file_path} doesn't exist.");
+                    std::process::exit(1);
+                };
+
+                if !Path::new(&params_file_path).exists() {
+                    eprint!("file {params_file_path} doesn't exist.");
+                    std::process::exit(1);
                 };
                 let (_m, model_path) = to_c_str(&model_file_path);
                 let (_p, params_path) = to_c_str(&params_file_path);

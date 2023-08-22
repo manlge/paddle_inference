@@ -14,7 +14,7 @@
         "--cap-add=SYS_PTRACE",
         "--security-opt",
         "seccomp=unconfined"
-    ]
+    ],
     // Features to add to the dev container. More info: https://containers.dev/features.
     // "features": {},
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
@@ -22,7 +22,21 @@
     // Uncomment the next line to run commands after the container is created.
     // "postCreateCommand": "cat /etc/os-release",
     // Configure tool-specific properties.
-    // "customizations": {},
+    "customizations": {
+        "vscode": {
+            // Add the IDs of extensions you want installed when the container is created.
+            "extensions": [
+                "rust-lang.rust-analyzer",
+                "tamasfe.even-better-toml",
+                "vadimcn.vscode-lldb",
+                "ms-azuretools.vscode-docker",
+                "usernamehw.errorlens",
+                "redhat.vscode-yaml",
+                "TabNine.tabnine-vscode",
+                "ms-vscode.cpptools-extension-pack"
+            ]
+        }
+    }
     // Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
     // "remoteUser": "devcontainer"
 }

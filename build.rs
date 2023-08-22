@@ -33,7 +33,6 @@ fn main() {
         );
     }
 
-    // println!("cargo:rustc-link-search=/usr/local/TensorRT-8.4.3.1/lib");
     for lib in [
         "paddle_inference_c",
         "onnxruntime",

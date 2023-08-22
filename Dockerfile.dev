@@ -9,3 +9,5 @@ ENV PATH="${PATH}:/root/.cargo/bin"
 
 RUN ln -s /usr/local/cuda-11.6/targets/x86_64-linux/lib/libcublas.so.11 /usr/local/cuda-11.6/targets/x86_64-linux/lib/libcublas.so && \
 	ln -s /usr/lib/x86_64-linux-gnu/libcudnn.so.8 /usr/local/cuda/lib64/libcudnn.so
+ENV PADDLE_INFERENCE=/home/mark/paddle_inference/paddle_inference_c
+ENV LD_LIBRARY_PATH=/usr/local/cuda-11.6/targets/x86_64-linux/lib:/home/mark/paddle_inference/paddle_inference_c/paddle/lib:/home/mark/paddle_inference/paddle_inference_c/third_party/install/onnxruntime/lib:/home/mark/paddle_inference/paddle_inference_c/third_party/install/paddle2onnx/lib:/home/mark/paddle_inference/paddle_inference_c/third_party/install/mkldnn/lib:/usr/local/TensorRT-8.4.3.1/lib:/home/mark/paddle_inference/paddle_inference_c/third_party/install/mklml/lib

@@ -4,3 +4,4 @@
 env.nu
 resource/
 out/
+paddle_inference_c/
