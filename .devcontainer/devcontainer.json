@@ -32,7 +32,6 @@
                 "ms-azuretools.vscode-docker",
                 "usernamehw.errorlens",
                 "redhat.vscode-yaml",
-                "TabNine.tabnine-vscode",
                 "ms-vscode.cpptools-extension-pack"
             ]
         }
